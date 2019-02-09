@@ -11,8 +11,8 @@ import java.io.IOException;
 public class CategoryPagerGenerator {
     private final static String ROOT_DIR = "/Users/gaurav/Documents/Projects/sharewish-in";
     private final static String TEMPLATE = "_drafts/cat_template.txt";
-    private final static String[] CAT_NAMES = {"good_morning", "good_night"};
-    private final static String[] CAT_READABLE_NAMES = {"Good Morning", "Good Night"};
+    private final static String[] CAT_NAMES = {"rose_day", "propose_day", "chocolate_day", "teddy_day", "promise_day", "hug_day", "kiss_day", "valentine_day", "love_you", "hate_you", "happy_birthday", "good_morning", "good_night"};
+    private final static String[] CAT_READABLE_NAMES = {"Rose Day", "Propose Day", "Chocolate Day", "Teddy Day", "Promise Day", "Hug Day", "Kiss Day", "Valentine Day", "Love You", "Hate you", "Happy Birthday", "Good Morning", "Good Night"};
 
     public static void main(String[] args) {
         File rootDir = new File(ROOT_DIR);
@@ -53,11 +53,22 @@ public class CategoryPagerGenerator {
 
         int totalPosts = postDir.list().length;
         if (totalPosts > 0) {
+            deleteOldPagesFile(catDir);
             for (int i = 0; i < totalPosts; i += 5) {
                 createPageFile(i, i / 5, totalPosts, catDir, catName, catReadableName);
             }
         } else {
             System.out.println("No Post Exists in this category " + catReadableName);
+        }
+    }
+
+    private static void deleteOldPagesFile(File catDir) {
+        String[] children = catDir.list();
+        for (String child : children) {
+            File file = new File(catDir, child);
+            if ("index.md".equals(file.getName()) || file.getName().contains("page")) {
+                file.delete();
+            }
         }
     }
 
@@ -83,7 +94,13 @@ public class CategoryPagerGenerator {
                         // append cat related lines
                         writer.write("category:    " + catName);
                         writer.newLine();
+                        writer.write("title:    " + catReadableName +" Wishes");
+                        writer.newLine();
                         writer.write("categorytitle:    " + catReadableName);
+                        writer.newLine();
+                        writer.write("description:    " + getCatDescription(catReadableName));
+                        writer.newLine();
+                        writer.write("ogimage:    " + getCatOgimage(catName));
                         writer.newLine();
                         int startPostIndex = counter + 1;
                         writer.write("start:    " + startPostIndex); // jekyll is one based
@@ -126,6 +143,14 @@ public class CategoryPagerGenerator {
         {
             e.printStackTrace();
         }
+    }
+
+    private static String getCatOgimage(String catName) {
+        return "/assets/images/categories/" + catName + ".jpg";
+    }
+
+    private static String getCatDescription(String catReadableName) {
+        return "Send amazing " + catReadableName + " e-greetings customised with your name";
     }
 
 }
